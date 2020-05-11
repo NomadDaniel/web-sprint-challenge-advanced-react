@@ -1,25 +1,30 @@
 import React, { useState } from "react";
 import { BrowserRouter as Router, Route, NavLink } from "react-router-dom";
-
 import PlantList from "./components/PlantList";
 import ShoppingCart from "./components/ShoppingCart";
 import CheckoutForm from "./components/CheckoutForm";
-
 import "./App.css";
 
-function App() {
+function App () {
   // array of plants that have been added to the cart
-  const [cart, setCart] = useState([]);
+  const [ cart, setCart ] = useState( [] );
 
   // add a plant to the cart
-  const addToCart = (plant) => {
-    setCart([...cart, plant]);
+  const addToCart = ( plant ) => {
+    setCart( [ ...cart, plant ] );
+  };
+  // remove a plant from the cart
+  const removeFromCart = ( plant ) => {
+    setCart( cart.filter( ( p ) => p.id !== plant.id ) );
   };
 
-  // remove a plant from the cart
-  const removeFromCart = (plant) => {
-    setCart(cart.filter((p) => p.id !== plant.id));
-  };
+  // ************ SEARCH - input value ************ //
+  const [ searchField, setSearchField ] = useState( "" );
+  // ********* SEARCH - input changeHandler ********* //
+  const changeHandler = e => [
+    setSearchField( e.target.value )
+  ];
+  // ************************************************ //
 
   return (
     <div>
@@ -28,6 +33,19 @@ function App() {
           <h1>
             React Plants <span role="img">🌿</span>
           </h1>
+
+          {/* // *********** SEARCH ************ // */ }
+          <form>
+            <label>Search by Name
+              <input
+                type="text"
+                onChange={ changeHandler }
+                value={ searchField }
+              />
+            </label>
+          </form>
+          {/* // *********************************** // */ }
+
           <ul className="steps">
             <li>
               <NavLink exact to="/">
@@ -38,7 +56,7 @@ function App() {
               <NavLink to="/cart">
                 Cart
                 <span className="cart-badge">
-                  {cart.length > 0 && cart.length}
+                  { cart.length > 0 && cart.length }
                 </span>
               </NavLink>
             </li>
@@ -47,22 +65,22 @@ function App() {
         <Route
           exact
           path="/"
-          render={() => <PlantList addToCart={addToCart} />}
+          render={ () => <PlantList addToCart={ addToCart } /> }
+          render={ () => <PlantList searchField={ searchField } addToCart={ addToCart } /> }
         />
         <Route
           path="/cart"
-          render={(props) => (
+          render={ ( props ) => (
             <ShoppingCart
-              {...props}
-              cart={cart}
-              removeFromCart={removeFromCart}
+              { ...props }
+              cart={ cart }
+              removeFromCart={ removeFromCart }
             />
-          )}
+          ) }
         />
-        <Route path="/checkout" component={CheckoutForm} />
+        <Route path="/checkout" component={ CheckoutForm } />
       </Router>
     </div>
   );
 }
-
 export default App;

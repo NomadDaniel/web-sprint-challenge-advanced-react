@@ -1,38 +1,37 @@
 import React, { Component } from "react";
 import axios from "axios";
-
 export default class PlantList extends Component {
-
-  // ______________________________________________________ //
-
-
   // add state with a property called "plants" - initialize as an empty array
-  state = {
-    plants: []
-  };
-
+  constructor () {
+    super();
+    this.state = {
+      plants: []
+    };
+  }
   // when the component mounts:
   //   - fetch data from the server endpoint - http://localhost:3333/plants
+  //   - set the returned plants array to this.state.plants
   componentDidMount () {
     axios
-      .get( "http://localhost:3333/plants" )
-      .then( res => {
-        console.log( res.data );
-        //   - set the returned plants array to this.state.plants
-        this.setState( { plants: res.data.plantsData } );
-        console.log( this.state.plants );
-      } )
+      .get( 'http://localhost:3333/plants' )
+      .then( res => this.setState( {
+        plants: res.data.plantsData
+      } ) )
       .catch( err => console.log( err ) );
   }
-
-  // ______________________________________________________ //
-
-
   /*********  DON'T CHANGE ANYTHING IN THE RENDER FUNCTION *********/
   render () {
     return (
       <main className="plant-list">
-        { this.state?.plants?.map( ( plant ) => (
+
+        {/* { this.state?.plants?.map( ( plant ) => ( */ }
+
+        {/* // *********************** SEARCH *********************** // */ }
+
+        { this.state?.plants?.filter( plant => this.props.searchField === "" ? plant : plant.name.toLowerCase().includes( this.props.searchField.toLowerCase() ) ).map( ( plant ) => (
+
+          // ************************************************ //
+
           <div className="plant-card" key={ plant.id }>
             <img className="plant-image" src={ plant.img } alt={ plant.name } />
             <div className="plant-details">
@@ -52,7 +51,8 @@ export default class PlantList extends Component {
               </button>
             </div>
           </div>
-        ) ) }
+        ) )
+        }
       </main>
     );
   }
